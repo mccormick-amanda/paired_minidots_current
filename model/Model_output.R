@@ -6,28 +6,30 @@ library(lubridate)
 ## Import output from models
 ############################
 
-type = "st33_2017_gamma0.05"
-model = "coupled_o2_update_sd_Iopt_lmtb_c01_gamma"
-
-output_rds = readRDS(paste0("model/output/", model, "/", type,"/output.rds"))
-
-output2 = rstan::summary(output_rds)
-as.data.frame(output2$summary) %>% rownames_to_column() %>% arrange(desc(Rhat)) %>% filter(Rhat > 1.05)
-as.data.frame(output2$summary) %>% rownames_to_column() %>% filter(is.na(Rhat)) %>% as_tibble() %>% print(n=Inf)
-
-d = as.data.frame(output2$summary) %>% rownames_to_column()
-
-
+# type = "st33_2017_gamma0.05"
+# model = "coupled_o2_update_sd_Iopt_lmtb_c01_gamma"
+# 
+# output_rds = readRDS(paste0("model/output/", model, "/", type,"/output.rds"))
+# 
+# output2 = rstan::summary(output_rds)
+# as.data.frame(output2$summary) %>% rownames_to_column() %>% arrange(desc(Rhat)) %>% filter(Rhat > 1.05)
+# as.data.frame(output2$summary) %>% rownames_to_column() %>% filter(is.na(Rhat)) %>% as_tibble() %>% print(n=Inf)
+# 
+# d = as.data.frame(output2$summary) %>% rownames_to_column()
 
 
 
 
-model = "coupled_o2_update_sd_Iopt_lmtb_c01_gamma"
+
+
+model = "coupled_o2_test"
 
 type = "reyk_2018"
 
 # model output (daily)
-daily = read_csv(paste0("model/output/", model, "/", type, "_gamma0.05","/daily_summary.csv")) 
+daily = read_csv(paste0("model/output/", model, "/", type,"/daily_summary.csv")) 
+
+#daily = read_csv(paste0("model/output/", model, "/", type, "_gamma0.05","/daily_summary.csv")) 
 
 # model output (hourly)
 hourly = read_csv(paste0("model/output/", model, "/", type, "_gamma0.05", "/hourly_summary.csv")) 
@@ -57,6 +59,23 @@ theme_set(theme_bw() %+replace%
 
 ########
 # DAILY model output
+
+## daily figure
+daily %>%
+  filter(name %in% c("beta0", "rho", "GPP", "ER", "NEP")) %>%
+  mutate(name = factor(name, levels = c("beta0", "rho", "GPP", "ER", "NEP"))) %>%
+  mutate(layer=factor(layer, levels=c("pelagic", "benthic"))) %>%
+  ggplot(aes(x = yday, y = middle, color=layer))+
+  facet_grid(name~., scales = "free_y") +
+  geom_ribbon(aes(ymin = lower, ymax = upper, fill=layer), 
+              color = NA, alpha = 0.3)+
+  geom_line(size = 0.8)+
+  geom_hline(aes(yintercept=0), lty=2, alpha=0.5)+
+  scale_color_manual("",values=c("deepskyblue3","black"), labels=c("Pelagic", "Benthic"))+
+  scale_fill_manual("",values=c("deepskyblue3","black"), labels=c("Pelagic", "Benthic"))+
+  theme(axis.title.x = element_blank(), legend.position = 'top', strip.text.y = element_text(size=11))
+
+
 
 # beta0
 daily %>% 
@@ -129,6 +148,7 @@ daily %>%
   scale_color_manual("",values=c("deepskyblue3","black"), labels=c("Pelagic", "Benthic"))+
   scale_fill_manual("",values=c("deepskyblue3","black"), labels=c("Pelagic", "Benthic"))+
   theme(axis.title.x = element_blank(), legend.position = 'top', strip.text.y = element_text(size=11))
+
 
 
 # x_pred; D

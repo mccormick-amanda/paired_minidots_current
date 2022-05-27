@@ -13,7 +13,7 @@ rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores()-2)
 
 # select site year
-type = "reyk_2018"
+type = "st33_2018"
 
 # read data
 data_list = read_rdump(paste0("data/", type,  "/data_list.R"))
@@ -40,8 +40,8 @@ model = "coupled_o2_test"
 
 
 model_path = paste0("model/",model,".stan")
-chains = 3
-iter = 100
+chains = 4
+iter = 1000
 
 start = Sys.time()
 # fit model
