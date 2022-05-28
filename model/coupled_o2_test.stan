@@ -136,8 +136,8 @@ parameters {
   // Declare variables
   //real<lower=0> a[2]; // scaled initial slope
   real<lower=0> opt[2]; // scaled optimal light
-  real<lower=0> gamma_1[2]; // scaling of gpp with temperature
-  real<lower=0> gamma_2[2]; // scaling of er with temperature
+  // real<lower=0> gamma_1[2]; // scaling of gpp with temperature
+  // real<lower=0> gamma_2[2]; // scaling of er with temperature
   matrix<lower=0>[n_days,2] b0; // scaled max gpp at temp_ref
   matrix<lower=0>[n_days,2] r; // scaled er at temp_ref
   //real<lower=0> sig_b0; // sd of log_b0 random walk (AM commented out)
@@ -170,11 +170,13 @@ transformed parameters {
     // loop over benthic and pelagic zones
     for (j in 1:2) {
       // gpp
-      b[n,j] = b0[map_days[n],j]*exp(-gamma_1[j] / ((temp[n,j] + 273.15) * kc));
+      // b[n,j] = b0[map_days[n],j]*exp(-gamma_1[j] / ((temp[n,j] + 273.15) * kc));
+      b[n,j] = b0[map_days[n],j];
       //chi[n,j] = b[n,j]*tanh((a[j]/b[n,j])*lambda[n,j]); //doing new Iopt eq
       chi[n,j] = b[n,j]*(lambda[n,j]/opt[j])*exp(1-lambda[n,j]/opt[j]); //new equation
       // er
-      kappa[n,j] = r[map_days[n],j]*exp(-gamma_2[j] / ((temp[n,j] + 273.15) * kc));
+      // kappa[n,j] = r[map_days[n],j]*exp(-gamma_2[j] / ((temp[n,j] + 273.15) * kc));
+      kappa[n,j] = r[map_days[n],j];
       // nep
       phi[n,j] = chi[n,j] - kappa[n,j];
     } // j 
@@ -203,9 +205,9 @@ model {
   c1 ~ normal(0, 0.5); //was -3, 3
   for (j in 1:2) { 
     //a[j] ~ normal(0, 1) T[0, ];
-    opt[j] ~ exponential(1 / 0.5);
-    gamma_1[j] ~ gamma(4, 4 / 0.5); 
-    gamma_2[j] ~ gamma(4, 4 / 0.5);    
+    opt[j] ~ exponential(1);
+    // gamma_1[j] ~ gamma(4, 4 / 0.5); 
+    // gamma_2[j] ~ gamma(4, 4 / 0.5);    
   }
   
   // Time-varuing rates
@@ -215,8 +217,8 @@ model {
       for (s in 1:n_sites) {
         for (j in 1:2) {
           // inital value for time varying-parameters
-          b0[pos,j] ~ exponential(1 / 0.5);
-          r[pos,j] ~ exponential(1 / 0.5);
+          b0[pos,j] ~ exponential(1);
+          r[pos,j] ~ exponential(1);
           // random walk for time varying-parameters
           for (d in (pos+1):(pos+days_per_site[s]-1)){
             b0[d,j] ~ normal(b0[d-1,j], sig_b0) T[0, ];
