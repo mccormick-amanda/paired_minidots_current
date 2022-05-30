@@ -13,7 +13,7 @@ rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores()-2)
 
 # select site year
-type = "st33_2018"
+type = "st33_2019"
 
 # read data
 data_list = read_rdump(paste0("data/", type,  "/data_list.R"))
@@ -86,8 +86,10 @@ check_energy(fit)
 #                 "a[1]","a[2]","sig_proc","c0","c1","lp__")
 
 #for coupled_o2_update_Iopt
-fixed_par_v = c("gamma_1[1]","gamma_2[1]","gamma_1[2]","gamma_2[2]",
-                "opt[1]","opt[2]","sig_proc","c0","c1","lp__","b0[1,1]","r[1,1]")
+# fixed_par_v = c("gamma_1[1]","gamma_2[1]","gamma_1[2]","gamma_2[2]",
+#                 "opt[1]","opt[2]","sig_proc","c0","c1","lp__","b0[1,1]","r[1,1]")
+
+fixed_par_v = c("opt[1]","opt[2]","sig_proc","c0","c1","lp__","b0[1,1]","r[1,1]")
 
 
 
@@ -184,10 +186,10 @@ daily_summary = fit_clean %>%
 
 
 
-# write_csv(fixed_pars, paste0("model/output/", model,"/", type,"/fixed_pars.csv"))
-# write_csv(fixed_summary, paste0("model/output/", model,"/", type,"/fixed_summary.csv"))
-# write_csv(hourly_summary, paste0("model/output/", model,"/", type,"/hourly_summary.csv"))
-# write_csv(daily_summary, paste0("model/output/", model,"/", type,"/daily_summary.csv"))
+write_csv(fixed_pars, paste0("model/output/", model,"/", type,"/fixed_pars.csv"))
+write_csv(fixed_summary, paste0("model/output/", model,"/", type,"/fixed_summary.csv"))
+write_csv(hourly_summary, paste0("model/output/", model,"/", type,"/hourly_summary.csv"))
+write_csv(daily_summary, paste0("model/output/", model,"/", type,"/daily_summary.csv"))
 
 
 daily_summary %>%

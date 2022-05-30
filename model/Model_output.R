@@ -24,7 +24,7 @@ library(lubridate)
 
 model = "coupled_o2_test"
 
-type = "reyk_2018"
+type = "st33_2019"
 
 # model output (daily)
 daily = read_csv(paste0("model/output/", model, "/", type,"/daily_summary.csv")) 
